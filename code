@@ -1,0 +1,100 @@
+
+        ORG 0000H
+   MAIN:SETB P3.5
+        CLR P0.1
+        JB P3.5 ,TURN_ON_PUMP
+	    SJMP  TURN_OFF_PUMP
+		   
+TURN_ON_PUMP: SETB P0.1
+			  ACALL LCD
+			  ACALL TEXT1
+			  
+			  ACALL DELAY
+			  RET
+
+TURN_OFF_PUMP:CLR P0.1
+			  ACALL LCDD
+			 
+			  ACALL TEXT2
+			  ACALL DELAY
+			  RET
+			  
+   
+	LCDD:MOV A, #38H          ; USE 2 LINES AND 5X7 MATRIX
+        ACALL LCD_COMMAND
+        MOV A, #0EH          ; DISPLAY ON , CURSOR BLINKING OFF
+        ACALL LCD_COMMAND
+        MOV A, #01H          ; CLEAR SCREEN
+        ACALL LCD_COMMAND
+		MOV A, #06H          ; INCREMENT CURSOR
+		ACALL LCD_COMMAND
+		
+	    RET
+		
+          ; DISPLAY LATTER ON LCD SCREEN
+  TEXT1:MOV A, #0C0H        ; FORCE CURSOR TO BEGINNING OF 1ST LINE
+		ACALL LCD_COMMAND
+		MOV A, #'P'         ; CONTENT STORE IN ACC
+	    ACALL LCD_DATA       ; CALL TO DEALY
+        ACALL DELAY          ; CALL TO DATA SUBRUTINE
+	    MOV A, #'U'          ; CONTENT STORE IN ACC
+	    ACALL LCD_DATA       ; CALL TO DEALY 
+        ACALL DELAY          ; CALL TO DATA SUBRUTINE
+	    MOV A, #'M'          ; CONTENT STORE IN ACC
+	    ACALL LCD_DATA       ; CALL TO DATA SUBRUTINE 
+        ACALL DELAY          ; CALL TO DEALY
+	    MOV A, #'P'          ; CONTENT STORE IN ACC
+	    ACALL LCD_DATA       ; CALL TO DATA SUBRUTINE
+        ACALL DELAY          ; CALL TO DEALY
+	    MOV A, #'O'          ; CONTENT STORE IN ACC
+	    ACALL LCD_DATA       ; CALL TO DATA SUBRUTINE
+        ACALL DELAY          ; CALL TO DEALY
+	    MOV A, #'N'          ; CONTENT STORE IN ACC
+	    RET
+		
+  TEXT2:
+		MOV A, #'P'         ; CONTENT STORE IN ACC
+	    ACALL LCD_DATA       ; CALL TO DEALY
+        ACALL DELAY          ; CALL TO DATA SUBRUTINE
+	    MOV A, #'U'          ; CONTENT STORE IN ACC
+	    ACALL LCD_DATA       ; CALL TO DEALY 
+        ACALL DELAY          ; CALL TO DATA SUBRUTINE
+	    MOV A, #'M'          ; CONTENT STORE IN ACC
+	    ACALL LCD_DATA       ; CALL TO DATA SUBRUTINE 
+        ACALL DELAY          ; CALL TO DEALY
+	    MOV A, #'P'          ; CONTENT STORE IN ACC
+	    ACALL LCD_DATA       ; CALL TO DATA SUBRUTINE
+        ACALL DELAY          ; CALL TO DEALY
+	    MOV A, #'O'          ; CONTENT STORE IN ACC
+	    ACALL LCD_DATA       ; CALL TO DATA SUBRUTINE
+        ACALL DELAY          ; CALL TO DEALY
+	    MOV A, #'F'          ; CONTENT STORE IN ACC
+	    ACALL DELAY          ; CALL TO DEALY
+	    MOV A, #'F'          ; CONTENT STORE IN ACC
+	    RET
+ 
+    ; COMMAND SUBRUTINE
+LCD_COMMAND: ACALL DELAY     ; CALL TO DELAY
+        MOV P0, A            
+	    CLR P2.7             ; RS=0
+	    CLR P2.6             ; R/W=O
+	    SETB P2.5            ; EN=1
+	    CLR P2.5            ; EN-0
+	    RET
+		
+   ; DATA SUBRUTINE  
+LCD_DATA: ACALL DELAY
+          MOV P0, A
+		  SETB P2.7          ; RS=1
+		  CLR P2.6           ; R/W=0
+		  SETB P2.5          ; EN=1
+		  CLR P2.5         ; EN=0
+		  RET
+	
+	; DELAY PROGRAM   
+DELAY: MOV R0, #0FFH
+L1:    MOV R1, #0FFH
+L2:	   DJNZ R1, L2
+       DJNZ R0, L1
+       RET
+	   END
